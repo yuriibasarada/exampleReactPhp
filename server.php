@@ -1,11 +1,10 @@
 <?php
 
-use Authenticator\Authentication;
-use Authenticator\Guard;
-use Authenticator\SignInController;
-use Core\ErrorHandler;
-use Core\JsonRequestDecoder;
-use Core\Router;
+use components\login\Authentication;
+use components\login\Guard;
+use core\ErrorHandler;
+use core\JsonRequestDecoder;
+use core\Router;
 use Dotenv\Dotenv;
 use FastRoute\DataGenerator\GroupCountBased;
 use FastRoute\RouteCollector;
@@ -14,7 +13,11 @@ use React\EventLoop\Factory;
 use React\Http\Server;
 use React\MySQL\Factory as FactorySQL;
 use Sikei\React\Http\Middleware\CorsMiddleware;
-use Authenticator\Storage as User;
+use components\login\Storage as User;
+
+use components\login\Login;
+use components\login\Logout;
+
 
 require_once 'vendor/autoload.php';
 
@@ -33,7 +36,8 @@ $user = new User($connection);
 $authenticator = new Authentication($user, getenv('JWT_KEY'));
 
 $routes = new RouteCollector(new Std(), new GroupCountBased());
-$routes->post('/login', new SignInController($authenticator));
+$routes->post('/login', new Login($authenticator));
+$routes->post('/logout', new Logout());
 
 $settings = [
     'allow_origin'      => ['*'],
