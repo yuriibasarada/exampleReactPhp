@@ -34,9 +34,6 @@ class Login
             )
             ->otherwise(
                 function (UserNotFound $exception) {
-                    $t = JsonResponse::unauthorised('User not found');
-                    var_dump('not');
-                    var_dump($t);
                     return JsonResponse::unauthorised('User not found');
                 }
             )

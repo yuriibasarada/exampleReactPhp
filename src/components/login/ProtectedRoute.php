@@ -4,7 +4,7 @@ namespace components\login;
 
 use core\JsonResponse;
 use Firebase\JWT\JWT;
-use RingCentral\Psr7\ServerRequest;
+use Psr\Http\Message\ServerRequestInterface;
 
 final class ProtectedRoute
 {
@@ -19,7 +19,7 @@ final class ProtectedRoute
         $this->middleware = $middleware;
     }
 
-    public function __invoke(ServerRequest $request)
+    public function __invoke(ServerRequestInterface $request)
     {
         if($this->authorize($request)) {
             return call_user_func($this->middleware, $request);
@@ -27,7 +27,7 @@ final class ProtectedRoute
         return JsonResponse::unauthorised();
     }
 
-    private function authorize(ServerRequest $request)
+    private function authorize(ServerRequestInterface $request)
     {
         $header = $request->getHeaderLine('Authorization');
         $token = str_replace('Bearer', '', $header);
@@ -35,7 +35,7 @@ final class ProtectedRoute
             return false;
         }
 
-        return JWT::decode($token, $token->jwtKey, ['HS256']) !== null;
+        return JWT::decode($token, $this->jwtKey, ['HS256']) !== null;
     }
 
 

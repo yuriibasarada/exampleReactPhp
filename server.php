@@ -37,7 +37,7 @@ $authenticator = new Authentication($user, getenv('JWT_KEY'));
 
 $routes = new RouteCollector(new Std(), new GroupCountBased());
 $routes->post('/login', new Login($authenticator));
-$routes->post('/logout', new Logout());
+$routes->post('/logout', $guard->protect(new Logout()));
 
 $settings = [
     'allow_origin'      => ['*'],
